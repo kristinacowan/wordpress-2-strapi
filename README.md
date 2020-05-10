@@ -1,10 +1,10 @@
 # wordpress-2-strapi
 
-The purpose of this repo is to enable moving content from the kristinacowan.com wordpress website, to a Strapi headless cms repository.
-WordPress websites vary greatly, it doesn't make sense to try to create one utility to do it all (especially since Strapi doesn't have an api for creating content types).
-WordPress websites an have dozens, even hundreds of custom content types, plugins, and themes. Furthermore, some WordPress websites have their content riddled with shortcodes. Each website needs to be looked at individually to see what makes sense to convert, and what doesn't.
+The purpose of this repo is to enable moving content from the kristinacowan.com wordpress website to a Strapi headless cms repository.
+WordPress websites vary greatly, it doesn't make sense to try to create one utility to move every possible WordPress website, especially since Strapi doesn't have an api for creating content types. WordPress is much too big of an ecosystem to make the assumption this can be done in any short amount of time.
+WordPress websites have dozens, even hundreds of custom content types, plugins, and themes. Furthermore, some WordPress websites have their content riddled with shortcodes. Many plugins and themes introduce their own table structures. When attempting to migrate off of WordPress onto another platform, it makes sense to tailor the migration strategy to the WordPress site in question.
 
-For [kristinacowan.com](https://kristinacowan.com), the WordPress site leverages a few shortchodes, a dozen or so plugins, and is primarily made up of pages and posts (with comments and attachments). The pages will be re-created in Strapi, but posts should come over as-is.
+For [kristinacowan.com](https://kristinacowan.com), the WordPress site leverages a commercial theme, a few shortcodes, a dozen or so plugins, and is primarily made up of pages and posts (with comments and attachments). The pages will be re-created in Strapi, but posts should come over as-is.
 
 Here are some of the requirements:
 
