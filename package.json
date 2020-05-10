@@ -1,0 +1,30 @@
+{
+  "name": "wordpress-2-strapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "wp-export-to-json": "node ./wp-export-to-json.js",
+    "wp-json-to-strapi": "node ./wp-json-to-strapi.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "escape-string-regexp": "^4.0.0",
+    "fast-xml-parser": "^3.16.0",
+    "form-data": "^3.0.0",
+    "he": "^1.2.0",
+    "html-urls": "^2.4.11",
+    "image-downloader": "^3.5.0",
+    "is-image-url": "^1.1.8",
+    "lodash.get": "^4.4.2",
+    "lodash.replace": "^4.1.4",
+    "mime-types": "^2.1.27",
+    "moment": "^2.25.3",
+    "needle": "^2.4.1",
+    "turndown": "^6.0.0"
+  }
+}
