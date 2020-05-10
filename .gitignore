@@ -1,0 +1,5 @@
+node_modules/
+wp-export.xml
+wp-export.json
+wp-export/
+.env
