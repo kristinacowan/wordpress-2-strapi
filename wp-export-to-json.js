@@ -9,7 +9,6 @@ const isImageUrl = require("is-image-url");
 const moment = require("moment");
 const TurndownService = require("turndown");
 const escapeRegExp = require("escape-string-regexp");
-
 require("dotenv").config();
 
 const globalReplace = console.log("Parsing wordpress export file");
@@ -32,13 +31,7 @@ const fso = (path, o, strFn) => {
 
 const allUrls = [];
 
-const disregardPostTypes = [
-  "sent_mail",
-  "postman_sent_mail",
-  "mc4wp-form",
-  "custom_css",
-  "nav_menu_item",
-];
+const disregardPostTypes = process.env.WP_IGNORE_POST_TYPES.split(',');
 
 const options = {
   attributeNamePrefix: "@_",
