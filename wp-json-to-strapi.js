@@ -6,6 +6,8 @@ const escapeRegExp = require("escape-string-regexp");
 const FormData = require("form-data");
 const needle = require("needle");
 const mime = require("mime-types");
+const TurndownService = require("turndown");
+const turndownService = new TurndownService();
 
 require("dotenv").config();
 
@@ -81,7 +83,7 @@ const _upload = async (file, name, caption, alternativeText) => {
     });
     return Array.isArray(body) ? (body.length > 0 ? body[0] : null) : body;
   } catch (e) {
-    console.error(e.message);
+    console.error(`File upload error: ${e.message}`);
     return null;
   }
 };
@@ -411,15 +413,17 @@ const importPosts = async (doUpdates) => {
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++
   // update post comments
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++
-  const existingComments = (await _axios.get("/comments?_limit=-1")).data;
+  let existingComments = (await _axios.get("/comments?_limit=-1")).data;
   // drop all existing comments
   // for (let di = 0; di < existingComments.length; di++) {
   //   const dicm = existingComments[di];
   //   console.log("Deleting comment " + dicm.id);
   //   await _delete(`/comments/${dicm.id}`);
   // }
-
+  // existingComments = (await _axios.get("/comments?_limit=-1")).data;
+  console.log(`Attempting to upload comments to posts`);
   let commentsCount = 0;
+  let commentErrors = 0;
   for (let wpPostIndex = 0; wpPostIndex < wpPosts.length; wpPostIndex++) {
     const wpPost = wpPosts[wpPostIndex];
     if (!wpPost.title) continue;
@@ -464,18 +468,24 @@ const importPosts = async (doUpdates) => {
         approved: wpComment.approved,
         comment_type: wpComment.type,
         comment_date: wpComment.date,
-        body: wpComment.content,
+        body: turndownService.turndown(wpComment.content),
         parent,
         post: { id: existing.id },
         user,
       };
-      newComment = await _post("/comments", newComment);
-      console.log(newComment);
-      sComments[`c-${wpComment.id}`] = { id: newComment.id };
-      commentsCount++;
+      try {
+        newComment = await _post("/comments", newComment);
+        sComments[`c-${wpComment.id}`] = { id: newComment.id };
+        commentsCount++;
+      } catch {
+        commentErrors++;
+        console.log("unable to post comment", JSON.stringify(newComment));
+      }
     }
   }
-  console.log(`  Added ${commentsCount} post comments`);
+  console.log(
+    `  Added ${commentsCount} post comments, ${commentErrors} post errors`
+  );
 };
 
 const uploadMedia = async () => {
@@ -496,7 +506,7 @@ const uploadMedia = async () => {
       if (!existingFile) {
         console.log(`Uploading file ${file}`);
         existingFile = await _upload(file, fileName);
-        existingFiles.push(newFile);
+        if (existingFile && existingFile.name) existingFiles.push(existingFile);
         uploads++;
       } else {
         exists++;
