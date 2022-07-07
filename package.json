@@ -23,7 +23,7 @@
     "lodash.get": "^4.4.2",
     "lodash.replace": "^4.1.4",
     "mime-types": "^2.1.27",
-    "moment": "^2.25.3",
+    "moment": "^2.29.4",
     "needle": "^2.4.1",
     "turndown": "^6.0.0"
   }
