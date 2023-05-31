@@ -9,7 +9,9 @@ const isImageUrl = require("is-image-url");
 const moment = require("moment");
 const TurndownService = require("turndown");
 const escapeRegExp = require("escape-string-regexp");
+const phpUnserialize = require('phpunserialize');
 require("dotenv").config();
+
 
 const globalReplace = console.log("Parsing wordpress export file");
 
@@ -168,6 +170,47 @@ const populateCategoryOrTagIds = (title, categoryIds, tagIds) => {
 
 const turndownService = new TurndownService();
 
+
+const parseMetas = wpMetas => {
+  //get metas as an array of key-value pairs
+  const array = (wpMetas || []).map(meta=>{
+    const key = _get(meta, ["wp:meta_key", "__cdata"]);
+    let value = _get(meta, ["wp:meta_value", "__cdata"]);
+
+    //maybe unserialize
+    try{
+      value = phpUnserialize(value);
+    }catch(e){}
+
+    //maybe parse JSON
+    try{
+      value = JSON.parse(value);
+    }catch(e){}
+
+    return {[key]:value}
+  })
+
+  //convert metas array to an object
+  const object = array.reduce((acc, obj) => {
+    const [key] = Object.keys(obj);
+    const value = obj[key];
+
+    if (acc.hasOwnProperty(key)) {
+      if (Array.isArray(acc[key])) {
+        acc[key].push(value);
+      } else {
+        acc[key] = [acc[key], value];
+      }
+    } else {
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {});
+
+  return object;
+}
+
 const getPosts = (postType) => {
   return (_get(otherProps, "item") || [])
     .filter((item) => _get(item, ["wp:post_type", "__cdata"]) === postType)
@@ -274,6 +317,7 @@ const getPosts = (postType) => {
         categoryIds,
         tagIds,
         comments,
+        metas:parseMetas(_get(item, "wp:postmeta"))
       };
     });
 };
@@ -319,7 +363,7 @@ slug:       ${p.slug}
 date:       ${p.postDate}
 status:     ${p.status}
 published:  ${p.pubDate}
----          
+---
 
 ${p.markdown}
 `.trim()
