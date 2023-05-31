@@ -25,6 +25,7 @@
     "mime-types": "^2.1.27",
     "moment": "^2.25.3",
     "needle": "^2.4.1",
+    "phpunserialize": "^1.3.0",
     "turndown": "^6.0.0"
   }
 }
